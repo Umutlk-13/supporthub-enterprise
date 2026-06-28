@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">Notifications</h2>
+    <a href="/mark-notifications-read" class="btn btn-dark">Mark all as read</a>
+</div>
+
+<div class="panel">
+    {% for note in notifications %}
+    <div class="notification-row {% if not note.is_read %}unread{% endif %}">
+        <strong>{{ note.message }}</strong>
+        <small>{{ note.created_at }}</small>
+    </div>
+    {% endfor %}
+
+    {% if notifications|length == 0 %}
+    <div class="text-center p-5">
+        <h5>No notifications.</h5>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

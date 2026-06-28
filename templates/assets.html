@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="page-title">Asset List</h2>
+
+<div class="profile-section mb-4">
+    <h4>Add Device</h4>
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-3 mb-3"><input name="asset_no" class="form-control" placeholder="Asset No" required></div>
+            <div class="col-md-3 mb-3"><input name="device_type" class="form-control" placeholder="Device Type" required></div>
+            <div class="col-md-3 mb-3"><input name="brand" class="form-control" placeholder="Brand"></div>
+            <div class="col-md-3 mb-3"><input name="model" class="form-control" placeholder="Model"></div>
+            <div class="col-md-3 mb-3"><input name="serial_no" class="form-control" placeholder="Serial No"></div>
+            <div class="col-md-3 mb-3"><input name="purchase_date" class="form-control" placeholder="Purchase Date"></div>
+            <div class="col-md-3 mb-3"><input name="warranty_date" class="form-control" placeholder="Warranty Date"></div>
+            <div class="col-md-3 mb-3"><input name="assigned_user" class="form-control" placeholder="Assigned User"></div>
+            <div class="col-md-3 mb-3"><input name="location" class="form-control" placeholder="Location"></div>
+            <div class="col-md-3 mb-3">
+                <select name="status" class="form-select">
+                    <option>Active</option>
+                    <option>Passive</option>
+                    <option>Repair</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary">Add Device</button>
+    </form>
+</div>
+
+<div class="panel">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Asset No</th>
+                <th>Device</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Serial</th>
+                <th>User</th>
+                <th>Warranty</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for a in assets %}
+            <tr>
+                <td>{{ a.asset_no }}</td>
+                <td>{{ a.device_type }}</td>
+                <td>{{ a.brand }}</td>
+                <td>{{ a.model }}</td>
+                <td>{{ a.serial_no }}</td>
+                <td>{{ a.assigned_user }}</td>
+                <td>{{ a.warranty_date }}</td>
+                <td><span class="badge bg-success">{{ a.status }}</span></td>
+                <td><a href="/delete-asset/{{ a.id }}" class="btn btn-sm btn-danger">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

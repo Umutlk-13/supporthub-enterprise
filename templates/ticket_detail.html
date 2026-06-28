@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="page-title">Request Detail</h2>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="panel">
+            <h4>HD-2026-{{ "%06d"|format(ticket.id) }}</h4>
+            <hr>
+
+            <p><strong>Customer:</strong> {{ ticket.customer_name }}</p>
+            <p><strong>Title:</strong> {{ ticket.title }}</p>
+            <p><strong>Category:</strong> {{ ticket.category }}</p>
+            <p><strong>Device:</strong> {{ ticket.device_type }}</p>
+            <p><strong>Priority:</strong> {{ ticket.priority }}</p>
+            <p><strong>Status:</strong> {{ ticket.status }}</p>
+            <p><strong>Assigned Group:</strong> {{ ticket.assigned_group }}</p>
+            <p><strong>Assigned To:</strong> {{ ticket.assigned_to }}</p>
+            <p><strong>Assigned At:</strong> {{ ticket.assigned_at }}</p>
+            <p><strong>Created By:</strong> {{ ticket.created_by }}</p>
+            <p><strong>Created At:</strong> {{ ticket.created_at }}</p>
+            <p><strong>Resolved At:</strong> {{ ticket.resolved_at }}</p>
+
+            <hr>
+
+            <h5>Description</h5>
+            <p>{{ ticket.description }}</p>
+
+            {% if ticket.image_filename %}
+            <hr>
+            <h5>Attached Image</h5>
+            <img src="/uploads/{{ ticket.image_filename }}" class="img-fluid rounded border" style="max-width:500px;">
+            {% endif %}
+
+            <hr>
+
+            <h5>Comments</h5>
+            <form method="POST" class="mb-3">
+                <textarea name="comment" class="form-control mb-2" rows="3" placeholder="Add comment..."></textarea>
+                <button class="btn btn-primary">Add Comment</button>
+            </form>
+
+            {% for comment in comments %}
+            <div class="comment-box">
+                <strong>{{ comment.user }}</strong>
+                <small>{{ comment.created_at }}</small>
+                <p>{{ comment.comment }}</p>
+            </div>
+            {% endfor %}
+
+            <br>
+            {% if session.get("role") in ["Admin","Operation Supervisor","Expert Technician","Technician"] %}
+            <a href="/edit-ticket/{{ ticket.id }}" class="btn btn-warning">Edit / Assign</a>
+            {% endif %}
+            <a href="/tickets" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="panel">
+            <div class="panel-title">
+                <h4>Ticket Timeline</h4>
+            </div>
+
+            <div class="timeline">
+                {% for log in logs %}
+                <div class="timeline-item">
+                    <strong>{{ log.created_at }}</strong>
+                    <p>{{ log.action }}</p>
+                    <small>{{ log.user }}</small>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if logs|length == 0 %}
+            <p class="text-muted">No timeline record.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="page-title">Profile</h2>
+
+<div class="profile-card mb-4">
+    <div class="profile-left">
+        <div class="avatar">{{ profile.full_name[0] }}</div>
+        <h4>{{ profile.full_name }}</h4>
+        <p>{{ profile.title }}</p>
+        <span class="login-badge">Role: {{ profile.role }}</span>
+    </div>
+
+    <div class="profile-right">
+        <div class="row">
+            <div class="col-md-6 profile-info"><label>Phone</label><strong>{{ profile.phone }}</strong></div>
+            <div class="col-md-6 profile-info"><label>Email</label><strong>{{ profile.email }}</strong></div>
+            <div class="col-md-6 profile-info"><label>Department</label><strong>{{ profile.department }}</strong></div>
+            <div class="col-md-6 profile-info"><label>Status</label><span class="status-pill">● {{ profile.status }}</span></div>
+            <div class="col-md-6 profile-info"><label>Last Login</label><strong>{{ profile.last_login }}</strong></div>
+        </div>
+    </div>
+</div>
+
+<div class="profile-section">
+    <h4>Change Password</h4>
+
+    {% if success %}
+    <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-4 mb-3"><input name="current_password" type="password" class="form-control" placeholder="Current Password"></div>
+            <div class="col-md-4 mb-3"><input name="new_password" type="password" class="form-control" placeholder="New Password"></div>
+            <div class="col-md-4 mb-3"><input name="confirm_password" type="password" class="form-control" placeholder="Confirm Password"></div>
+            <div class="text-end"><button class="btn btn-primary">Update Password</button></div>
+        </div>
+    </form>
+</div>
+{% endblock %}

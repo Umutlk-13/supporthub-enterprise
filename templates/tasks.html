@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="filter-card mb-4">
+    <form method="GET" class="row align-items-end">
+        <div class="col-md-4">
+            <label>Müşteri</label>
+            <input class="form-control" placeholder="Lütfen müşteri seçiniz">
+        </div>
+
+        <div class="col-md-3">
+            <label>Çağrı No</label>
+            <input class="form-control" placeholder="Çağrı numarası veya ref no...">
+        </div>
+
+        <div class="col-md-3">
+            <label>Durum</label>
+            <select class="form-select">
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Resolved</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">
+                <i class="fa-solid fa-magnifying-glass"></i> Listele
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-title">
+        <h4>Görev Listesi</h4>
+        <span class="badge bg-primary">{{ tasks|length }} Task</span>
+    </div>
+
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Çağrı No</th>
+                <th>Müşteri</th>
+                <th>Kategori</th>
+                <th>Başlık</th>
+                <th>Atanan Grup</th>
+                <th>Atanan Kişi</th>
+                <th>Atama Tarihi</th>
+                <th>Kayıt Tarihi</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for ticket in tasks %}
+            <tr>
+                <td><strong>HD-2026-{{ "%06d"|format(ticket.id) }}</strong></td>
+                <td>{{ ticket.customer_name }}</td>
+                <td>{{ ticket.category }}</td>
+                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.assigned_group }}</td>
+                <td>{{ ticket.assigned_to }}</td>
+                <td>{{ ticket.assigned_at }}</td>
+                <td>{{ ticket.created_at }}</td>
+                <td>
+                    {% if ticket.status == "Resolved" %}
+                    <span class="badge bg-success">Resolved</span>
+                    {% elif ticket.status == "In Progress" %}
+                    <span class="badge bg-primary">In Progress</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Open</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if session.get("role") in ["Admin","Operation Supervisor","Expert Technician"] %}
+                    <form method="POST" action="/assign-ticket/{{ ticket.id }}" class="d-flex mb-2">
+                        <select name="assigned_to" class="form-select form-select-sm">
+                            <option>Unassigned</option>
+                            {% for technician in technicians %}
+                            <option {% if ticket.assigned_to == technician.full_name %}selected{% endif %}>{{ technician.full_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button class="btn btn-sm btn-primary ms-2">Ata</button>
+                    </form>
+                    {% endif %}
+
+                    <a href="/ticket-detail/{{ ticket.id }}" class="btn btn-sm btn-dark">Detail</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if tasks|length == 0 %}
+    <div class="text-center p-5">
+        <h5>No data available</h5>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

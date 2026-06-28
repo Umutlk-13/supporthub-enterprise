@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">Request List / Çağrı Listesi</h2>
+    <a href="/new-ticket" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> New Request
+    </a>
+</div>
+
+<div class="panel mb-4">
+    <form method="GET" class="d-flex">
+        <input class="form-control" name="search" value="{{ search }}" placeholder="Search ticket...">
+        <button class="btn btn-dark ms-2">Search</button>
+    </form>
+</div>
+
+<div class="panel">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Çağrı No</th>
+                <th>Müşteri</th>
+                <th>Kategori</th>
+                <th>Başlık</th>
+                <th>Atanan Kişi</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td><strong>HD-2026-{{ "%06d"|format(ticket.id) }}</strong></td>
+                <td>{{ ticket.customer_name }}</td>
+                <td>{{ ticket.category }}</td>
+                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.assigned_to }}</td>
+                <td>
+                    {% if ticket.status == "Resolved" %}
+                    <span class="badge bg-success">Resolved</span>
+                    {% elif ticket.status == "In Progress" %}
+                    <span class="badge bg-primary">In Progress</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Open</span>
+                    {% endif %}
+                </td>
+
+                <td width="280">
+                    {% if session.get("role") in ["Admin","Operation Supervisor","Expert Technician"] %}
+                    <form method="POST" action="/assign-ticket/{{ ticket.id }}" class="d-flex mb-2">
+                        <select name="assigned_to" class="form-select form-select-sm">
+                            <option>Unassigned</option>
+                            {% for technician in technicians %}
+                            <option {% if ticket.assigned_to == technician.full_name %}selected{% endif %}>{{ technician.full_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button class="btn btn-sm btn-primary ms-2">Ata</button>
+                    </form>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <a href="/ticket-detail/{{ ticket.id }}" class="btn btn-dark btn-sm">Detail</a>
+                        {% if session.get("role") in ["Admin","Operation Supervisor","Expert Technician","Technician"] %}
+                        <a href="/edit-ticket/{{ ticket.id }}" class="btn btn-warning btn-sm">Edit</a>
+                        {% endif %}
+                        {% if session.get("role") in ["Admin","Operation Supervisor","Expert Technician"] %}
+                        <a href="/delete-ticket/{{ ticket.id }}" class="btn btn-danger btn-sm">Delete</a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if tickets|length == 0 %}
+    <div class="text-center p-5">
+        <h5>No Tickets Found</h5>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

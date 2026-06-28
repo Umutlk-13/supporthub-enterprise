@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="page-title">New Request / Yeni Çağrı</h2>
+
+<div class="panel">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Customer Name / Müşteri</label>
+                <input name="customer_name" class="form-control" value="{{ session.get('display_name','') }}" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Department</label>
+                <input name="department" class="form-control" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Branch</label>
+                <select name="branch" class="form-select">
+                    <option>Istanbul HQ</option>
+                    <option>Ankara Branch</option>
+                    <option>Izmir Branch</option>
+                    <option>Bursa Branch</option>
+                    <option>Antalya Branch</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Category / Kategori</label>
+                <select name="category" class="form-select">
+                    <option>Printer</option>
+                    <option>Network</option>
+                    <option>Computer</option>
+                    <option>Software</option>
+                    <option>Hardware</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Title / Başlık</label>
+                <input name="title" class="form-control" placeholder="Printer problem, network problem..." required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Device Type</label>
+                <select name="device_type" class="form-select">
+                    <option>Desktop PC</option>
+                    <option>Laptop</option>
+                    <option>Printer</option>
+                    <option>Network</option>
+                    <option>Modem</option>
+                    <option>Monitor</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Priority</label>
+                <select name="priority" class="form-select">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                    <option>Critical</option>
+                </select>
+            </div>
+
+            {% if session.get("role") != "Customer" %}
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Assigned Engineer</label>
+                <select name="assigned_to" class="form-select">
+                    <option>Unassigned</option>
+                    {% for technician in technicians %}
+                    <option>{{ technician.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% else %}
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Assigned Engineer</label>
+                <input class="form-control" value="Operation will assign technician" disabled>
+            </div>
+            {% endif %}
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Problem Description</label>
+                <textarea name="description" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Attach Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+        </div>
+
+        <button class="btn btn-primary">Create Request</button>
+        <a href="/tickets" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

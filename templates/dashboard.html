@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-card mb-4">
+    <div>
+        <h2>Welcome back, {{ session.get("display_name","Admin") }}</h2>
+        <p>Monitor support requests, assignments, notifications and reports.</p>
+    </div>
+    <a href="/new-ticket" class="btn btn-light">
+        <i class="fa-solid fa-plus"></i> Create Ticket
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4"><div class="stat-card bg-blue"><h5>Total Tickets</h5><h2>{{ total }}</h2></div></div>
+    <div class="col-md-3 mb-4"><div class="stat-card bg-orange"><h5>Open</h5><h2>{{ open_tickets }}</h2></div></div>
+    <div class="col-md-3 mb-4"><div class="stat-card bg-red"><h5>In Progress</h5><h2>{{ in_progress }}</h2></div></div>
+    <div class="col-md-3 mb-4"><div class="stat-card bg-green"><h5>Resolved</h5><h2>{{ resolved }}</h2></div></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="panel">
+            <div class="panel-title"><h4>Ticket Status Overview</h4></div>
+            <canvas id="statusChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="panel">
+            <div class="panel-title"><h4>Priority Distribution</h4></div>
+            <canvas id="priorityChart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-title">
+        <h4>Recent Tickets</h4>
+        <a href="/tickets" class="btn btn-sm btn-dark">View All</a>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Ticket</th>
+                <th>Customer</th>
+                <th>Title</th>
+                <th>Assigned To</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for ticket in latest_tickets %}
+            <tr>
+                <td><strong>HD-2026-{{ "%06d"|format(ticket.id) }}</strong></td>
+                <td>{{ ticket.customer_name }}</td>
+                <td>{{ ticket.title }}</td>
+                <td>{{ ticket.assigned_to }}</td>
+                <td>{{ ticket.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if latest_tickets|length == 0 %}
+    <div class="text-center text-muted py-4">No recent tickets found.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+new Chart(document.getElementById('statusChart'), {
+    type:'bar',
+    data:{
+        labels:['Open','In Progress','Resolved'],
+        datasets:[{
+            data:[{{ open_tickets }},{{ in_progress }},{{ resolved }}],
+            backgroundColor:['#f59e0b','#ef4444','#10b981']
+        }]
+    },
+    options:{plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('priorityChart'), {
+    type:'doughnut',
+    data:{
+        labels:['Low','Medium','High','Critical'],
+        datasets:[{
+            data:[{{ low }},{{ medium }},{{ high }},{{ critical }}],
+            backgroundColor:['#10b981','#38bdf8','#f59e0b','#ef4444']
+        }]
+    }
+});
+</script>
+{% endblock %}
